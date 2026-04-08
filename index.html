@@ -110,6 +110,7 @@ async function cargarIglesias() {
   const { data } = await supabase.from("iglesias").select("*");
 
   const select = document.getElementById("iglesia");
+  select.innerHTML = '<option value="">Seleccionar iglesia</option>';
 
   data.forEach(i => {
     const option = document.createElement("option");
@@ -130,10 +131,10 @@ async function registrar() {
     .insert([{ nombre, telefono, iglesia_id }]);
 
   if (error) {
-    alert("Error al registrar");
+    alert("Error");
     console.log(error);
   } else {
-    alert("Registrado correctamente ✅");
+    alert("Registrado ✅");
   }
 }
 
@@ -148,9 +149,9 @@ async function pedirOracion() {
   ]);
 
   if (error) {
-    alert("Error al enviar");
+    alert("Error");
   } else {
-    alert("Oración enviada 🙏");
+    alert("Enviado 🙏");
   }
 }
 
