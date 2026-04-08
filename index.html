@@ -2,57 +2,102 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Iglesias MACLA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iglesias MACLA-IA</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
 body {
-  background: #0a0f2c;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #0a0f2c, #000);
   color: white;
-  font-family: Arial;
   text-align: center;
 }
 
+header {
+  padding: 30px 20px;
+}
+
+h1 {
+  color: gold;
+}
+
+.logo {
+  width: 80px;
+  margin: 10px auto;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  margin: 15px;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(255,215,0,0.2);
+}
+
 input, select {
-  width: 80%;
-  padding: 10px;
+  width: 90%;
+  padding: 12px;
   margin: 10px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
 }
 
 button {
   background: gold;
-  padding: 10px 20px;
   border: none;
+  padding: 12px 20px;
   border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #e6c200;
+}
+
+.footer {
+  margin-top: 30px;
+  font-size: 12px;
+  opacity: 0.6;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Registro Iglesia</h2>
+<header>
+  <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="logo">
+  <h1>Iglesias MACLA-IA</h1>
+  <p>Conectando la fe con la tecnología</p>
+</header>
 
-<input id="nombre" placeholder="Nombre">
-<input id="telefono" placeholder="Teléfono">
+<div class="card">
+  <h2>📝 Registro Iglesia</h2>
 
-<select id="iglesia">
-  <option value="">Seleccionar iglesia</option>
-</select>
+  <input id="nombre" placeholder="Nombre">
+  <input id="telefono" placeholder="Teléfono">
 
-<br>
-<button onclick="test()">Registrarme</button>
+  <select id="iglesia">
+    <option value="">Seleccionar iglesia</option>
+  </select>
 
-<hr>
+  <button onclick="registrar()">Registrarme</button>
+</div>
 
-<h3>🙏 Pedir oración</h3>
+<div class="card">
+  <h2>🙏 Pedir oración</h2>
 
-<input id="pedido" placeholder="Escribe tu pedido">
+  <input id="pedido" placeholder="Escribe tu pedido">
 
-<br>
-<button onclick="pedirOracion()">Enviar</button>
+  <button onclick="pedirOracion()">Enviar</button>
+</div>
+
+<div class="footer">
+  MACLA-IA © 2026
+</div>
 
 <script>
 const supabase = window.supabase.createClient(
@@ -80,18 +125,15 @@ async function registrar() {
   const telefono = document.getElementById("telefono").value;
   const iglesia_id = document.getElementById("iglesia").value;
 
-  console.log("DATOS:", nombre, telefono, iglesia_id);
-
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("fieles")
     .insert([{ nombre, telefono, iglesia_id }]);
 
-  console.log("RESULT:", data, error);
-
   if (error) {
-    alert("Error");
+    alert("Error al registrar");
+    console.log(error);
   } else {
-    alert("Guardado");
+    alert("Registrado correctamente ✅");
   }
 }
 
@@ -101,19 +143,18 @@ async function pedirOracion() {
   const pedido = document.getElementById("pedido").value;
   const iglesia_id = document.getElementById("iglesia").value;
 
-  await supabase.from("oraciones").insert([
+  const { error } = await supabase.from("oraciones").insert([
     { nombre, pedido, iglesia_id }
   ]);
 
-  alert("Oración enviada 🙏");
+  if (error) {
+    alert("Error al enviar");
+  } else {
+    alert("Oración enviada 🙏");
+  }
 }
 
 cargarIglesias();
-
-function test() {
-  alert("FUNCIONA EL BOTON");
-}
-
 </script>
 
 </body>
