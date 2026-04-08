@@ -3,159 +3,602 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Iglesias MACLA-IA</title>
+<title>MACLA-IA | Conectando la Fe</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
-body {
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #0a0f2c, #000);
-  color: white;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #FFD700;
+  --primary-dark: #B8860B;
+  --bg-dark: #0a0f2c;
+  --bg-darker: #050820;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-hover: rgba(255, 255, 255, 0.08);
+  --text-light: #ffffff;
+  --text-muted: #a0a0a0;
+  --success: #4CAF50;
+  --error: #f44336;
+  --border-radius: 16px;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+  color: var(--text-light);
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+/* Header */
+.header {
   text-align: center;
-}
-
-header {
-  padding: 30px 20px;
-}
-
-h1 {
-  color: gold;
+  padding: 40px 20px 30px;
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
 }
 
 .logo {
   width: 80px;
-  margin: 10px auto;
+  height: 80px;
+  margin: 0 auto 20px;
+  filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.3));
+  animation: float 3s ease-in-out infinite;
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+h1 {
+  color: var(--primary);
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+/* Container */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Cards */
 .card {
-  background: rgba(255,255,255,0.05);
-  margin: 15px;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(255,215,0,0.2);
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  border-radius: var(--border-radius);
+  padding: 30px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-input, select {
-  width: 90%;
-  padding: 12px;
-  margin: 10px;
-  border-radius: 10px;
-  border: none;
+.card:hover {
+  background: var(--card-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(255, 215, 0, 0.1);
 }
 
-button {
-  background: gold;
-  border: none;
-  padding: 12px 20px;
+.card-title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--primary);
+}
+
+.card-title .icon {
+  font-size: 1.8rem;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.2);
   border-radius: 10px;
+  color: var(--text-light);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23FFD700' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
   font-weight: bold;
   cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
 }
 
-button:hover {
-  background: #e6c200;
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255, 215, 0, 0.4);
 }
 
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Alerts */
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: none;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert.success {
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
+
+.alert.error {
+  background: rgba(244, 67, 54, 0.2);
+  border: 1px solid var(--error);
+  color: var(--error);
+}
+
+/* Footer */
 .footer {
-  margin-top: 30px;
-  font-size: 12px;
-  opacity: 0.6;
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.footer-links {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  color: var(--primary);
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.footer-link:hover {
+  opacity: 0.7;
+}
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+  
+  .card-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* Stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  color: var(--primary);
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="logo">
-  <h1>Iglesias MACLA-IA</h1>
-  <p>Conectando la fe con la tecnología</p>
-</header>
-
-<div class="card">
-  <h2>📝 Registro Iglesia</h2>
-
-  <input id="nombre" placeholder="Nombre">
-  <input id="telefono" placeholder="Teléfono">
-
-  <select id="iglesia">
-    <option value="">Seleccionar iglesia</option>
-  </select>
-
-  <button onclick="registrar()">Registrarme</button>
+<!-- Header -->
+<div class="header">
+  <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="logo" alt="MACLA-IA Logo">
+  <h1>MACLA-IA</h1>
+  <p class="subtitle">Conectando la fe con la tecnología</p>
 </div>
 
-<div class="card">
-  <h2>🙏 Pedir oración</h2>
+<!-- Container -->
+<div class="container">
+  
+  <!-- Stats -->
+  <div class="stats" id="stats" style="display: none;">
+    <div class="stat-card">
+      <div class="stat-number" id="totalFieles">0</div>
+      <div class="stat-label">Fieles</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="totalOraciones">0</div>
+      <div class="stat-label">Oraciones</div>
+    </div>
+  </div>
 
-  <input id="pedido" placeholder="Escribe tu pedido">
+  <!-- Registro Card -->
+  <div class="card">
+    <h2 class="card-title">
+      <span class="icon">📝</span>
+      Registro de Fieles
+    </h2>
+    
+    <div id="alertRegistro" class="alert"></div>
+    
+    <form id="formRegistro" onsubmit="event.preventDefault(); registrar();">
+      <div class="form-group">
+        <label class="form-label" for="nombre">Nombre completo</label>
+        <input 
+          type="text" 
+          id="nombre" 
+          placeholder="Ej: Juan Pérez"
+          required
+          minlength="3"
+        >
+      </div>
 
-  <button onclick="pedirOracion()">Enviar</button>
+      <div class="form-group">
+        <label class="form-label" for="telefono">Teléfono</label>
+        <input 
+          type="tel" 
+          id="telefono" 
+          placeholder="Ej: +54 9 11 1234-5678"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="iglesia">Iglesia</label>
+        <select id="iglesia" required>
+          <option value="">Selecciona tu iglesia</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn" id="btnRegistro">
+        Registrarme
+      </button>
+    </form>
+  </div>
+
+  <!-- Pedidos de Oración Card -->
+  <div class="card">
+    <h2 class="card-title">
+      <span class="icon">🙏</span>
+      Pedido de Oración
+    </h2>
+    
+    <div id="alertOracion" class="alert"></div>
+    
+    <form id="formOracion" onsubmit="event.preventDefault(); pedirOracion();">
+      <div class="form-group">
+        <label class="form-label" for="nombreOracion">Tu nombre</label>
+        <input 
+          type="text" 
+          id="nombreOracion" 
+          placeholder="Nombre"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="iglesiaOracion">Iglesia</label>
+        <select id="iglesiaOracion" required>
+          <option value="">Selecciona tu iglesia</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pedido">Tu petición</label>
+        <textarea 
+          id="pedido" 
+          placeholder="Escribe tu pedido de oración aquí..."
+          required
+          minlength="10"
+        ></textarea>
+      </div>
+
+      <button type="submit" class="btn" id="btnOracion">
+        Enviar Pedido
+      </button>
+    </form>
+  </div>
+
 </div>
 
+<!-- Footer -->
 <div class="footer">
-  MACLA-IA © 2026
+  <p>MACLA-IA © 2026 | Ministerio de Tecnología y Fe</p>
+  <div class="footer-links">
+    <a href="#" class="footer-link">Sobre nosotros</a>
+    <a href="#" class="footer-link">Contacto</a>
+    <a href="#" class="footer-link">Privacidad</a>
+  </div>
 </div>
 
 <script>
+// Inicializar Supabase
 const supabase = window.supabase.createClient(
   "https://iilefvoxigwozzbzgdzb.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlpbGVmdm94aWd3b3p6YnpnZHpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2MzE4MTAsImV4cCI6MjA3ODIwNzgxMH0.NK5fR9dsYMlweLAICf4ZWIUVcusho1z3kW0AAfzXwqc"
 );
 
-// cargar iglesias
+// Mostrar alerta
+function mostrarAlerta(elementId, mensaje, tipo) {
+  const alert = document.getElementById(elementId);
+  alert.className = `alert ${tipo}`;
+  alert.textContent = mensaje;
+  alert.style.display = 'block';
+  
+  setTimeout(() => {
+    alert.style.display = 'none';
+  }, 5000);
+}
+
+// Cargar iglesias
 async function cargarIglesias() {
-  const { data } = await supabase.from("iglesias").select("*");
+  try {
+    const { data, error } = await supabase
+      .from("iglesias")
+      .select("*")
+      .order('nombre');
 
-  const select = document.getElementById("iglesia");
-  select.innerHTML = '<option value="">Seleccionar iglesia</option>';
+    if (error) throw error;
 
-  data.forEach(i => {
-    const option = document.createElement("option");
-    option.value = i.id;
-    option.textContent = i.nombre;
-    select.appendChild(option);
-  });
+    const selects = [
+      document.getElementById("iglesia"),
+      document.getElementById("iglesiaOracion")
+    ];
+
+    selects.forEach(select => {
+      select.innerHTML = '<option value="">Selecciona tu iglesia</option>';
+      
+      if (data && data.length > 0) {
+        data.forEach(iglesia => {
+          const option = document.createElement("option");
+          option.value = iglesia.id;
+          option.textContent = iglesia.nombre;
+          select.appendChild(option);
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error cargando iglesias:', error);
+    mostrarAlerta('alertRegistro', 'Error al cargar iglesias', 'error');
+  }
 }
 
-// registrar fiel
+// Cargar estadísticas
+async function cargarEstadisticas() {
+  try {
+    const [fieles, oraciones] = await Promise.all([
+      supabase.from("fieles").select("*", { count: 'exact', head: true }),
+      supabase.from("oraciones").select("*", { count: 'exact', head: true })
+    ]);
+
+    if (fieles.count > 0 || oraciones.count > 0) {
+      document.getElementById('stats').style.display = 'grid';
+      document.getElementById('totalFieles').textContent = fieles.count || 0;
+      document.getElementById('totalOraciones').textContent = oraciones.count || 0;
+    }
+  } catch (error) {
+    console.error('Error cargando estadísticas:', error);
+  }
+}
+
+// Validar teléfono
+function validarTelefono(telefono) {
+  const regex = /^[\d\s\-\+\(\)]+$/;
+  return regex.test(telefono) && telefono.replace(/\D/g, '').length >= 8;
+}
+
+// Registrar fiel
 async function registrar() {
-  const nombre = document.getElementById("nombre").value;
-  const telefono = document.getElementById("telefono").value;
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
   const iglesia_id = document.getElementById("iglesia").value;
+  const btn = document.getElementById("btnRegistro");
 
-  const { error } = await supabase
-    .from("fieles")
-    .insert([{ nombre, telefono, iglesia_id }]);
+  // Validaciones
+  if (!nombre || !telefono || !iglesia_id) {
+    mostrarAlerta('alertRegistro', 'Por favor completa todos los campos', 'error');
+    return;
+  }
 
-  if (error) {
-    alert("Error");
-    console.log(error);
-  } else {
-    alert("Registrado ✅");
+  if (!validarTelefono(telefono)) {
+    mostrarAlerta('alertRegistro', 'Por favor ingresa un teléfono válido', 'error');
+    return;
+  }
+
+  // Deshabilitar botón
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Registrando...';
+
+  try {
+    const { data, error } = await supabase
+      .from("fieles")
+      .insert([{ nombre, telefono, iglesia_id }])
+      .select();
+
+    if (error) throw error;
+
+    mostrarAlerta('alertRegistro', '✅ ¡Registro exitoso! Bienvenido a la comunidad', 'success');
+    document.getElementById("formRegistro").reset();
+    cargarEstadisticas();
+  } catch (error) {
+    console.error('Error:', error);
+    
+    if (error.code === '23505') {
+      mostrarAlerta('alertRegistro', 'Este teléfono ya está registrado', 'error');
+    } else {
+      mostrarAlerta('alertRegistro', 'Error al registrar. Intenta nuevamente', 'error');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Registrarme';
   }
 }
 
-// pedir oración
+// Pedir oración
 async function pedirOracion() {
-  const nombre = document.getElementById("nombre").value;
-  const pedido = document.getElementById("pedido").value;
-  const iglesia_id = document.getElementById("iglesia").value;
+  const nombre = document.getElementById("nombreOracion").value.trim();
+  const pedido = document.getElementById("pedido").value.trim();
+  const iglesia_id = document.getElementById("iglesiaOracion").value;
+  const btn = document.getElementById("btnOracion");
 
-  const { error } = await supabase.from("oraciones").insert([
-    { nombre, pedido, iglesia_id }
-  ]);
+  // Validaciones
+  if (!nombre || !pedido || !iglesia_id) {
+    mostrarAlerta('alertOracion', 'Por favor completa todos los campos', 'error');
+    return;
+  }
 
-  if (error) {
-    alert("Error");
-  } else {
-    alert("Enviado 🙏");
+  if (pedido.length < 10) {
+    mostrarAlerta('alertOracion', 'El pedido debe tener al menos 10 caracteres', 'error');
+    return;
+  }
+
+  // Deshabilitar botón
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Enviando...';
+
+  try {
+    const { data, error } = await supabase
+      .from("oraciones")
+      .insert([{ 
+        nombre, 
+        pedido, 
+        iglesia_id,
+        fecha: new Date().toISOString()
+      }])
+      .select();
+
+    if (error) throw error;
+
+    mostrarAlerta('alertOracion', '🙏 Tu pedido ha sido enviado. Oraremos por ti', 'success');
+    document.getElementById("formOracion").reset();
+    cargarEstadisticas();
+  } catch (error) {
+    console.error('Error:', error);
+    mostrarAlerta('alertOracion', 'Error al enviar el pedido. Intenta nuevamente', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enviar Pedido';
   }
 }
 
-cargarIglesias();
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+  cargarIglesias();
+  cargarEstadisticas();
+});
 </script>
 
 </body>
