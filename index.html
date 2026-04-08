@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Iglesias MACLA</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+body {
+  background: #0a0f2c;
+  color: white;
+  font-family: Arial;
+  text-align: center;
+}
+
+input, select {
+  width: 80%;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: gold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Registro Iglesia</h2>
+
+<input id="nombre" placeholder="Nombre">
+<input id="telefono" placeholder="Teléfono">
+
+<select id="iglesia">
+  <option value="">Seleccionar iglesia</option>
+</select>
+
+<br>
+<button onclick="test()">Registrarme</button>
+
+<hr>
+
+<h3>🙏 Pedir oración</h3>
+
+<input id="pedido" placeholder="Escribe tu pedido">
+
+<br>
+<button onclick="pedirOracion()">Enviar</button>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://iilefvoxigwozzbzgdzb.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlpbGVmdm94aWd3b3p6YnpnZHpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2MzE4MTAsImV4cCI6MjA3ODIwNzgxMH0.NK5fR9dsYMlweLAICf4ZWIUVcusho1z3kW0AAfzXwqc"
+);
+
+// cargar iglesias
+async function cargarIglesias() {
+  const { data } = await supabase.from("iglesias").select("*");
+
+  const select = document.getElementById("iglesia");
+
+  data.forEach(i => {
+    const option = document.createElement("option");
+    option.value = i.id;
+    option.textContent = i.nombre;
+    select.appendChild(option);
+  });
+}
+
+// registrar fiel
+async function registrar() {
+  const nombre = document.getElementById("nombre").value;
+  const telefono = document.getElementById("telefono").value;
+  const iglesia_id = document.getElementById("iglesia").value;
+
+  console.log("DATOS:", nombre, telefono, iglesia_id);
+
+  const { data, error } = await supabase
+    .from("fieles")
+    .insert([{ nombre, telefono, iglesia_id }]);
+
+  console.log("RESULT:", data, error);
+
+  if (error) {
+    alert("Error");
+  } else {
+    alert("Guardado");
+  }
+}
+
+// pedir oración
+async function pedirOracion() {
+  const nombre = document.getElementById("nombre").value;
+  const pedido = document.getElementById("pedido").value;
+  const iglesia_id = document.getElementById("iglesia").value;
+
+  await supabase.from("oraciones").insert([
+    { nombre, pedido, iglesia_id }
+  ]);
+
+  alert("Oración enviada 🙏");
+}
+
+cargarIglesias();
+
+function test() {
+  alert("FUNCIONA EL BOTON");
+}
+
+</script>
+
+</body>
+</html>
