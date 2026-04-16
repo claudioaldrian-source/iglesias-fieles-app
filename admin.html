@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel Pastor | MACLA-IA</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<!-- Supabase CDN actualizado -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 * {
@@ -54,8 +55,14 @@ body {
 }
 
 .logo {
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
+  filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.3));
+}
+
+.logo-macla {
+  width: 120px;
+  height: 100px;
   filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.3));
 }
 
@@ -102,6 +109,7 @@ body {
   font-weight: 600;
   transition: all 0.3s;
   font-size: 0.95rem;
+  min-width: 130px;
 }
 
 .btn-primary {
@@ -447,6 +455,23 @@ tr:hover {
     width: 100%;
   }
 }
+
+.header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+
+.header-title {
+  text-align: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 </style>
 </head>
 
@@ -454,20 +479,31 @@ tr:hover {
 
 <!-- Header -->
 <div class="header">
+
+  <!-- IZQUIERDA -->
   <div class="header-left">
-    <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="logo" alt="Logo">
-    <div class="header-title">
-      <h1>Panel de Administración</h1>
-      <p>Gestión pastoral MACLA-IA</p>
-    </div>
+    <img src="logo-iglesia.png" class="logo" alt="Logo">
   </div>
-  
+
+  <!-- CENTRO -->
+  <div class="header-title" style="text-align:center;">
+    <h1>Panel de Administración</h1>
+    <p>Gestión pastoral MACLA-IA</p>
+  </div>
+
+  <!-- DERECHA -->
   <div class="header-right">
-    <select class="iglesia-selector" id="iglesiaSelector" onchange="cambiarIglesia()">
-      <option value="">Selecciona una iglesia</option>
-    </select>
-    <button class="btn btn-primary" onclick="actualizarDatos()">🔄 Actualizar</button>
+    <img src="logo_macla.png" class="logo-macla" alt="Macla">
+
+    <button class="btn btn-primary" onclick="actualizarDatos()">
+      🔄 Actualizar
+    </button>
+
+    <button class="btn btn-secondary" onclick="abrirModalFiel()">
+      ➕ Nuevo Fiel
+    </button>
   </div>
+
 </div>
 
 <!-- Container -->
@@ -542,17 +578,24 @@ tr:hover {
       </div>
       <div class="table-wrapper">
         <table id="tablaFieles">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Teléfono</th>
-              <th>Fecha de Registro</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
+
+      <thead>
+  <tr>
+    <th>Fecha</th>
+    <th>Nombre</th>
+    <th>Dirección</th>
+    <th>Nacimiento</th>
+    <th>Edad</th>
+    <th>Aporte</th>
+    <th>Estado</th>
+    <th>Usuario</th>
+    <th>Clave</th>
+  </tr>
+</thead>
+
           <tbody id="fielesTbody">
             <tr>
-              <td colspan="4" class="loading">
+              <td colspan="9" class="loading">
                 <div class="spinner"></div>
               </td>
             </tr>
@@ -577,57 +620,27 @@ tr:hover {
 </div>
 
 <script>
-// Inicializar Supabase
-const supabase = window.supabase.createClient(
+// Inicializar Supabase con la versión 2 del SDK
+const { createClient } = supabase;
+
+const supabaseClient = createClient(
   "https://iilefvoxigwozzbzgdzb.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlpbGVmdm94aWd3b3p6YnpnZHpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2MzE4MTAsImV4cCI6MjA3ODIwNzgxMH0.NK5fR9dsYMlweLAICf4ZWIUVcusho1z3kW0AAfzXwqc"
 );
+
+document.addEventListener('DOMContentLoaded', () => {
+  actualizarDatos();
+});
 
 let iglesiaActual = "";
 let todasOraciones = [];
 let todosFieles = [];
 
-// Cargar iglesias
-async function cargarIglesias() {
-  try {
-    const { data, error } = await supabase
-      .from("iglesias")
-      .select("*")
-      .order('nombre');
-
-    if (error) throw error;
-
-    const selector = document.getElementById("iglesiaSelector");
-    selector.innerHTML = '<option value="">Todas las iglesias</option>';
-    
-    if (data && data.length > 0) {
-      data.forEach(iglesia => {
-        const option = document.createElement("option");
-        option.value = iglesia.id;
-        option.textContent = iglesia.nombre;
-        selector.appendChild(option);
-      });
-      
-      // Seleccionar la primera iglesia por defecto
-      if (data.length > 0) {
-        iglesiaActual = data[0].id;
-        selector.value = iglesiaActual;
-        actualizarDatos();
-      }
-    }
-  } catch (error) {
-    console.error('Error cargando iglesias:', error);
-  }
-}
-
-// Cambiar iglesia
-function cambiarIglesia() {
-  iglesiaActual = document.getElementById("iglesiaSelector").value;
-  actualizarDatos();
-}
+const IGLESIA_ID = "6851cd60-18e6-4884-8334-93c76ceadf78";
 
 // Actualizar todos los datos
 async function actualizarDatos() {
+  console.log('♻️ Actualizando datos...');
   await Promise.all([
     cargarEstadisticas(),
     cargarOraciones(),
@@ -638,30 +651,26 @@ async function actualizarDatos() {
 // Cargar estadísticas
 async function cargarEstadisticas() {
   try {
-    let queryFieles = supabase.from("fieles").select("*", { count: 'exact' });
-    let queryOraciones = supabase.from("oraciones").select("*");
-    
-    if (iglesiaActual) {
-      queryFieles = queryFieles.eq("iglesia_id", iglesiaActual);
-      queryOraciones = queryOraciones.eq("iglesia_id", iglesiaActual);
-    }
-    
-    const [fieles, oraciones] = await Promise.all([
-      queryFieles,
-      queryOraciones
-    ]);
 
-    // Total fieles
-    document.getElementById('totalFieles').textContent = fieles.count || 0;
-    
-    // Total oraciones
-    const totalOraciones = oraciones.data?.length || 0;
+    const { count: totalFieles } = await supabaseClient
+      .from("fieles")
+      .select("*", { count: 'exact', head: true })
+      .eq("iglesia_id", IGLESIA_ID);
+
+    const { data: oracionesData } = await supabaseClient
+      .from("oraciones")
+      .select("*")
+      .eq("iglesia_id", IGLESIA_ID);
+
+    document.getElementById('totalFieles').textContent = totalFieles || 0;
+
+    const totalOraciones = oracionesData?.length || 0;
     document.getElementById('totalOraciones').textContent = totalOraciones;
-    
-    // Oraciones hoy
+
+        // Oraciones hoy
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
-    const oracionesHoy = oraciones.data?.filter(o => {
+    const oracionesHoy = oracionesData?.filter(o => {
       const fecha = new Date(o.fecha || o.created_at);
       return fecha >= hoy;
     }).length || 0;
@@ -670,28 +679,29 @@ async function cargarEstadisticas() {
     // Actividad semana
     const semanaAtras = new Date();
     semanaAtras.setDate(semanaAtras.getDate() - 7);
-    const actividadSemana = oraciones.data?.filter(o => {
+    const actividadSemana = oracionesData?.filter(o => {
       const fecha = new Date(o.fecha || o.created_at);
       return fecha >= semanaAtras;
     }).length || 0;
     document.getElementById('actividadSemana').textContent = actividadSemana;
     
+    console.log('📊 Estadísticas actualizadas');
   } catch (error) {
-    console.error('Error cargando estadísticas:', error);
+    console.error('❌ Error cargando estadísticas:', error);
   }
 }
 
 // Cargar oraciones
 async function cargarOraciones() {
   try {
-    let query = supabase
+    let query = supabaseClient
       .from("oraciones")
       .select("*")
       .order('created_at', { ascending: false });
     
-    if (iglesiaActual) {
-      query = query.eq("iglesia_id", iglesiaActual);
-    }
+    
+      query = query.eq("iglesia_id", IGLESIA_ID);
+    
     
     const { data, error } = await query;
     
@@ -699,9 +709,10 @@ async function cargarOraciones() {
     
     todasOraciones = data || [];
     mostrarOraciones(todasOraciones);
+    console.log(`🙏 ${todasOraciones.length} oraciones cargadas`);
     
   } catch (error) {
-    console.error('Error cargando oraciones:', error);
+    console.error('❌ Error cargando oraciones:', error);
     document.getElementById('oracionesLista').innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">⚠️</div>
@@ -736,20 +747,22 @@ function mostrarOraciones(oraciones) {
     });
     
     const esNuevo = (Date.now() - fecha.getTime()) < 24 * 60 * 60 * 1000;
-    
+    const estado = oracion.estado || "nuevo";
+
     return `
       <div class="oracion-item">
         <div class="oracion-header">
           <div class="oracion-nombre">
             ${oracion.nombre}
-            ${esNuevo ? '<span class="badge new">Nuevo</span>' : ''}
+            ${estado === "nuevo" ? '<span class="badge new">Nuevo</span>' : ''}
+            ${estado === "respondido" ? '<span class="badge pending">Respondido</span>' : ''}
           </div>
           <div class="oracion-fecha">${fechaFormateada}</div>
         </div>
         <div class="oracion-texto">${oracion.pedido}</div>
         <div class="oracion-actions">
-          <button class="btn btn-secondary btn-small" onclick="marcarAtendido('${oracion.id}')">
-            ✓ Marcar como atendido
+          <button class="btn btn-secondary btn-small" onclick="responderPedido('${oracion.id}')">
+            ✓ Responder
           </button>
         </div>
       </div>
@@ -770,14 +783,12 @@ function filtrarOraciones() {
 // Cargar fieles
 async function cargarFieles() {
   try {
-    let query = supabase
+    let query = supabaseClient
       .from("fieles")
       .select("*")
       .order('created_at', { ascending: false });
     
-    if (iglesiaActual) {
-      query = query.eq("iglesia_id", iglesiaActual);
-    }
+   query = query.eq("iglesia_id", IGLESIA_ID);
     
     const { data, error } = await query;
     
@@ -785,9 +796,10 @@ async function cargarFieles() {
     
     todosFieles = data || [];
     mostrarFieles(todosFieles);
+    console.log(`👥 ${todosFieles.length} fieles cargados`);
     
   } catch (error) {
-    console.error('Error cargando fieles:', error);
+    console.error('❌ Error cargando fieles:', error);
   }
 }
 
@@ -817,16 +829,31 @@ function mostrarFieles(fieles) {
     
     const esNuevo = (Date.now() - fecha.getTime()) < 7 * 24 * 60 * 60 * 1000;
     
+    const edad = fiel.fecha_nacimiento 
+  ? calcularEdad(fiel.fecha_nacimiento) 
+  : "-";    
+
     return `
-      <tr>
-        <td>${fiel.nombre}</td>
-        <td>${fiel.telefono}</td>
-        <td>${fechaFormateada}</td>
-        <td>
-          ${esNuevo ? '<span class="badge new">Nuevo</span>' : '<span class="badge">Activo</span>'}
-        </td>
-      </tr>
-    `;
+<tr>
+  <td>${fiel.created_at ? new Date(fiel.created_at).toLocaleDateString() : "-"}</td>
+
+  <td>${[fiel.nombre, fiel.apellido].filter(Boolean).join(" ") || "-"}</td>
+
+  <td>${fiel.direccion || "-"}</td>
+
+  <td>${fiel.fecha_nacimiento || "-"}</td>
+
+  <td>${fiel.fecha_nacimiento ? calcularEdad(fiel.fecha_nacimiento) : "-"}</td>
+
+  <td>${fiel.aporte || "-"}</td>
+
+  <td>${fiel.estado || "activo"}</td>
+
+  <td>${fiel.usuario || "-"}</td>
+
+  <td>${fiel.clave || "-"}</td>
+</tr>
+`;
   }).join('');
 }
 
@@ -886,16 +913,178 @@ function cargarEstadisticasDetalladas() {
 }
 
 // Marcar como atendido (función placeholder)
-function marcarAtendido(id) {
-  alert('Función de marcar como atendido - ID: ' + id);
-  // Aquí puedes implementar la lógica para actualizar el estado en Supabase
+async function responderPedido(id) {
+
+  if (!id) {
+    alert("❌ ID inválido");
+    return;
+  }
+
+  const respuesta = prompt("✍️ Escribí la respuesta:");
+
+  if (!respuesta) return;
+
+  console.log("📤 ID recibido:", id);
+  console.log("📤 Respuesta:", respuesta);
+
+  const { data, error } = await supabaseClient
+    .from("oraciones")
+    .update({
+      respuesta: respuesta,
+      estado: "respondido"
+    })
+    .eq("id", id);
+
+  if (error) {
+    console.error("❌ ERROR:", error);
+    alert("Error al guardar respuesta");
+    return;
+  }
+
+  console.log("✅ ACTUALIZADO:", data);
+
+  alert("Respuesta enviada 🙏");
+
+  cargarOraciones();
 }
 
-// Inicializar
 document.addEventListener('DOMContentLoaded', () => {
-  cargarIglesias();
+  actualizarDatos();
 });
+
+console.log('✅ Panel Pastor cargado correctamente');
+
+function abrirModalFiel() {
+  document.getElementById("modalFiel").style.display = "block";
+}
+
+function cerrarModalFiel() {
+  document.getElementById("modalFiel").style.display = "none";
+}
+
+async function guardarFiel() {
+
+  const nombre = document.getElementById("nombreFiel").value.trim();
+  const apellido = document.getElementById("apellidoFiel").value.trim();
+  const telefono = document.getElementById("telefonoFiel").value.trim();
+  const direccion = document.getElementById("direccionFiel").value.trim();
+  const fechaNacimiento = document.getElementById("fechaFiel").value;
+  const aporte = document.getElementById("donacionFiel").value.trim();
+  const estado = document.getElementById("estadoFiel").value;
+
+  // ✅ generar usuario limpio
+  const usuario = (nombre + apellido)
+    .toLowerCase()
+    .replace(/\s+/g, "");
+
+  // ✅ clave simple
+  const clave = telefono.slice(-4);
+
+  const { error } = await supabaseClient
+    .from("fieles")
+    .insert([{
+      nombre,
+      apellido,
+      telefono,
+      direccion,
+      fecha_nacimiento: fechaNacimiento,
+      aporte,
+      estado: estado,
+      usuario,
+      clave,
+      iglesia_id: IGLESIA_ID
+    }]);
+
+  if (error) {
+    console.error(error);
+    alert("❌ Error al guardar");
+    return;
+  }
+
+  alert(`✅ Fiel creado
+
+Usuario: ${usuario}
+Clave: ${clave}`);
+
+  cerrarModalFiel();
+  cargarFieles();
+}
+
+function calcularEdad(fecha) {
+  const hoy = new Date();
+  const nacimiento = new Date(fecha);
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const m = hoy.getMonth() - nacimiento.getMonth();
+
+  if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--;
+  }
+
+  return edad;
+}
+
+function generarCredenciales() {
+  const nombre = document.getElementById("nombreFiel").value || "";
+  const apellido = document.getElementById("apellidoFiel").value || "";
+  const telefono = document.getElementById("telefonoFiel").value || "";
+
+  const usuario = (nombre + apellido)
+    .toLowerCase()
+    .replace(/\s+/g, "");
+
+  const clave = telefono.slice(-4);
+
+  document.getElementById("usuarioFiel").value = usuario;
+  document.getElementById("claveFiel").value = clave;
+}
+
 </script>
+
+<div id="modalFiel" style="
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  z-index:999;
+  overflow-y:auto;
+">
+
+  <div style="
+    background:#1a1f3a;
+    max-width:500px;
+    margin:40px auto;
+    padding:25px;
+    border-radius:12px;
+  ">
+
+    <h2 style="color:#FFD700;">Registrar Nuevo Fiel</h2>
+
+    <input id="nombreFiel" onkeyup="generarCredenciales()" placeholder="Nombre" class="search-box"><br><br>
+    <input id="apellidoFiel" onkeyup="generarCredenciales()" placeholder="Apellido" class="search-box"><br><br>
+    <input id="telefonoFiel" onkeyup="generarCredenciales()" placeholder="Teléfono" class="search-box"><br><br>
+    <input id="direccionFiel" placeholder="Dirección" class="search-box"><br><br>
+    
+    <label style="color:#aaa;">Fecha de nacimiento</label>
+    <input type="date" id="fechaFiel" class="search-box"><br><br>
+
+    <input id="donacionFiel" placeholder="Tipo de donación (opcional)" class="search-box"><br><br>
+
+    <select id="estadoFiel" class="search-box">
+      <option value="activo">Activo</option>
+      <option value="no activo">No activo</option>
+    </select><br><br>
+
+    <input id="usuarioFiel" placeholder="Usuario (auto)" class="search-box" disabled><br><br>
+    <input id="claveFiel" placeholder="Clave (auto)" class="search-box" disabled><br><br>
+
+    <button class="btn btn-primary" onclick="guardarFiel()">Guardar</button>
+    <button class="btn btn-secondary" onclick="cerrarModalFiel()">Cancelar</button>
+
+  </div>
+</div>
 
 </body>
 </html>
