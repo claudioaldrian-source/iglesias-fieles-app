@@ -2,346 +2,41 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MACLA-IA | App del Fiel</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Página en prueba</title>
 
 <style>
-/* Estilos Base [cite: 1, 2, 3] */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --primary: #FFD700;
-  --primary-dark: #B8860B;
-  --bg-dark: #0a0f2c;
-  --bg-darker: #050820;
-  --card-bg: rgba(255, 255, 255, 0.05);
-  --text-light: #ffffff;
-  --text-muted: #a0a0a0;
-  --border-radius: 16px;
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#111;
+  color:white;
+  font-family:Arial;
 }
 
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
-  color: var(--text-light);
-  min-height: 100vh;
+.caja{
+  text-align:center;
 }
 
-/* Header con Logos a los Extremos */
-.header-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background: rgba(0,0,0,0.2);
+h1{
+  font-size:50px;
+  color:#00ff88;
 }
 
-.logo-iglesia { width: 60px; }
-.logo-macla { width: 60px; }
-
-.header-center {
-  text-align: center;
-  padding: 20px;
+p{
+  font-size:20px;
 }
-
-/* Pantalla de Login */
-#login-screen {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
-  padding: 20px;
-}
-
-.login-card {
-  background: var(--card-bg);
-  padding: 30px;
-  border-radius: var(--border-radius);
-  border: 1px solid rgba(255, 215, 0, 0.2);
-  width: 100%;
-  max-width: 350px;
-}
-
-/* Contenido Principal (Oculto al inicio) */
-#main-content { display: none; padding: 20px; }
-
-.menu-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.menu-item {
-  background: var(--card-bg);
-  border: 1px solid rgba(255, 215, 0, 0.1);
-  border-radius: var(--border-radius);
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.menu-item:hover { background: rgba(255, 215, 0, 0.1); }
-
-/* Form Elements */
-input {
-  width: 100%; padding: 14px; margin: 10px 0;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--primary);
-  border-radius: 10px; color: white;
-}
-
-.btn-gold {
-  width: 100%; padding: 14px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  border: none; border-radius: 10px; font-weight: bold; cursor: pointer;
-  color: #000;
-}
-
-.section-card { 
-    display: none; background: var(--card-bg); 
-    padding: 25px; border-radius: var(--border-radius);
-    border: 1px solid rgba(255, 215, 0, 0.1);
-    margin-top: 20px;
-}
-
-.active { display: block; }
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px 20px;
-}
-
-.logo-izq, .logo-der {
-  width: 60px;
-}
-
-.titulo-centro {
-  text-align: center;
-  flex: 1;
-}
-
-.titulo-centro h1 {
-  color: #FFD700;
-  margin: 0;
-}
-
-.titulo-centro h3 {
-  margin: 5px 0;
-  font-weight: normal;
-}
-
-.titulo-centro p {
-  margin: 0;
-  font-size: 14px;
-  opacity: 0.8;
-}
-
 </style>
 </head>
+
 <body>
 
-<!-- HEADER SUPERIOR -->
-<div class="header">
-
-  <img src="logo-iglesia.png" class="logo-izq" alt="Iglesia">
-
-  <div class="titulo-centro">
-    <h1>Iglesia Centro</h1>
-    <h3 id="nombreUsuario"></h3>
-    <p>Bienvenido a tu comunidad</p>
-  </div>
-
-  <img src="logo_macla.png" class="logo-der" alt="MACLA-IA">
-
+<div class="caja">
+  <h1>PÁGINA EN PRUEBA</h1>
+  <p>Estamos realizando actualizaciones.</p>
 </div>
 
-
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-card">
-    <h2 style="color:var(--primary); text-align:center; margin-bottom:20px;">
-      Ingreso Fieles
-    </h2>
-
-    <input type="text" id="user_input" placeholder="Usuario">
-    <input type="password" id="pass_input" placeholder="Contraseña">
-
-    <button class="btn-gold" onclick="login()">ENTRAR</button>
-  </div>
-</div>
-
-
-<!-- CONTENIDO PRINCIPAL -->
-<div id="main-content" style="display:none;">
-
-  <!-- RESPUESTAS -->
-  <div id="sec-respuestas" class="section-card">
-    <h2 style="color:var(--primary)">💬 Respuestas del Pastor</h2>
-    <div id="lista-respuestas"></div>
-  </div>
-
-  <!-- MENÚ -->
-  <div class="menu-grid">
-    <div class="menu-item" onclick="showSection('sec-oracion')">✨<span>Oración</span></div>
-    <div class="menu-item" onclick="showSection('sec-pedido')">🙏<span>Pedido</span></div>
-    <div class="menu-item" onclick="showSection('sec-noticias')">📢<span>Noticias</span></div>
-    <div class="menu-item" onclick="showSection('sec-eventos')">📅<span>Eventos</span></div>
-    <div class="menu-item" onclick="showSection('sec-respuestas')">💬<span>Respuestas</span></div>
-  </div>
-
-</div>
-
-
-  <div id="sec-oracion" class="section-card">
-    <h2 style="color:var(--primary)">📖 Oración del Día</h2>
-    <p id="txt-oracion" style="margin-top:15px; line-height:1.6;"></p>
-  </div>
-
-  <div id="sec-pedido" class="section-card">
-    <h2 style="color:var(--primary)">🙏 Enviar Petición</h2>
-    <textarea id="pedido_texto" rows="4" placeholder="¿Por qué o quién quieres orar hoy?"></textarea>
-    <button class="btn-gold" onclick="enviarPedido()">ENVIAR AL PASTOR</button>
-  </div>
-</div>
-  
-<div class="footer" style="text-align:center; padding: 40px; color: var(--text-muted); font-size: 0.8rem;">
-  MACLA-IA © 2026 | Ministerio de Tecnología y Fe
-</div>
-
-<script>
-// Configuración Supabase
-const supabaseClient = supabase.createClient(
-  "https://iilefvoxigwozzbzgdzb.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlpbGVmdm94aWd3b3p6YnpnZHpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2MzE4MTAsImV4cCI6MjA3ODIwNzgxMH0.NK5fR9dsYMlweLAICf4ZWIUVcusho1z3kW0AAfzXwqc" // Asegúrate de usar tu clave anon real
-);
-
-const IGLESIA_ID = "6851cd60-18e6-4884-8334-93c76ceadf78";
-
-// Función de Login
-async function login() {
-    const usuario = document.getElementById('user_input').value;
-    const clave = document.getElementById('pass_input').value;
-
-    // Aquí buscamos en tu tabla 'fieles' o 'usuarios' según la tengas en el panel
-    const { data, error } = await supabaseClient
-        .from('fieles') 
-        .select('*')
-        .eq('usuario', usuario)
-        .eq('clave', clave)
-        .maybeSingle();
-
-    if (data) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('main-content').style.display = 'block';
-        localStorage.setItem('fiel_nombre', data.nombre);
-        localStorage.setItem('fiel_usuario', data.usuario);
-
-       mostrarUsuario();
-
- // 👇 MOSTRAR USUARIO
-document.getElementById("nombreUsuario").innerText =
-  localStorage.getItem("fiel_nombre");
- 
-// 👇 CARGAR RESPUESTAS
-cargarRespuestas();
-
-// 🔄 actualizar cada 5 segundos
-setInterval(cargarRespuestas, 5000);
-
-    } else {
-        alert("Usuario o clave incorrectos. Consulta con tu pastor.");
-    }
-}
-
-function showSection(id) {
-    document.querySelectorAll('.section-card').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-// Oración dinámica
-const oraciones = [
-    "Señor, guíame en este día y sé mi fortaleza.",
-    "Padre, bendice mi entrada y mi salida hoy.",
-    "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio."
-];
-document.getElementById('txt-oracion').innerText = oraciones[Math.floor(Math.random()*oraciones.length)];
-
-async function enviarPedido() {
-    const pedido = document.getElementById('pedido_texto').value.trim();
-    const nombre = localStorage.getItem('fiel_nombre') || "Anónimo";
-    const usuario = localStorage.getItem('fiel_usuario');
-
-    if (!pedido) {
-        alert("Escribe tu pedido 🙏");
-        return;
-    }
-
-    console.log("📤 Enviando pedido...", { nombre, pedido });
-
-    const { data, error } = await supabaseClient
-        .from('oraciones')
-        .insert([{
-            nombre,
-            pedido,
-            usuario, // 🔥 CLAVE
-            iglesia_id: IGLESIA_ID,            
-        }]);
-
-    if (error) {
-    console.error("❌ Error Supabase:", error);
-    alert(JSON.stringify(error)); // 👈 ESTE ES EL IMPORTANTE
-    return;
-}
-
-    console.log("✅ Pedido guardado:", data);
-
-    alert("🙏 Tu pedido fue enviado correctamente");
-
-    document.getElementById('pedido_texto').value = "";
-}
-
-async function cargarRespuestas() {
-  const usuario = localStorage.getItem('fiel_usuario');
-
-  const { data, error } = await supabaseClient
-    .from("oraciones")
-    .select("*")
-    .eq("usuario", usuario)
-    .not("respuesta", "is", null)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  const cont = document.getElementById("lista-respuestas");
-
-  if (!data || data.length === 0) {
-    cont.innerHTML = "<p>No hay respuestas todavía</p>";
-    return;
-  }
-
-  cont.innerHTML = data.map(o => `
-    <div style="margin-bottom:15px; padding:10px; border:1px solid #444; border-radius:10px;">
-      <p><b>🙏 Pedido:</b> ${o.pedido}</p>
-      <p style="color:#FFD700;"><b>💬 Respuesta:</b> ${o.respuesta}</p>
-    </div>
-  `).join("");
-}
-
-function mostrarUsuario() {
-  const usuario = localStorage.getItem("fiel_usuario");
-  document.getElementById("nombreUsuario").innerText = usuario || "";
-}
-
-</script>
 </body>
 </html>
